@@ -1,17 +1,17 @@
-type Status = 'active' | 'redeemed' | 'deactivated' | 'not-found';
+type Status = "active" | "redeemed" | "inactive" | "archived";
 
 const styles: Record<Status, string> = {
-  active: 'bg-emerald-100 text-emerald-800',
-  redeemed: 'bg-neutral-100 text-neutral-600',
-  deactivated: 'bg-red-100 text-red-700',
-  'not-found': 'bg-neutral-100 text-neutral-600',
+  active: "bg-emerald-100 text-emerald-800",
+  redeemed: "bg-neutral-100 text-neutral-600",
+  inactive: "bg-red-100 text-red-700",
+  archived: "bg-neutral-100 text-neutral-600",
 };
 
 const labels: Record<Status, string> = {
-  active: 'Active',
-  redeemed: 'Fully Redeemed',
-  deactivated: 'Deactivated',
-  'not-found': 'Not Found',
+  active: "Active",
+  redeemed: "Fully Redeemed",
+  inactive: "Inactive",
+  archived: "Archived",
 };
 
 export default function StatusBadge({ status }: { status: Status }) {

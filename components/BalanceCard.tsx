@@ -10,9 +10,19 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
+/** Remaining balance spent; original value was positive. */
+export function giftCardIsRedeemed(card: GiftCard): boolean {
+  return card.balance === 0 && card.originalBalance > 0;
+}
+
+/** Matches green "Active" badge: spendable balance, not archived. */
+export function giftCardIsActive(card: GiftCard): boolean {
+  return !card.archived && card.balance > 0;
+}
+
 export default function BalanceCard({ card }: { card: GiftCard }) {
-  const isRedeemed = card.balance === 0 && card.originalBalance > 0;
-  const isDeactivated = !card.active;
+  const isRedeemed = giftCardIsRedeemed(card);
+  const isActive = giftCardIsActive(card);
 
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
@@ -28,46 +38,42 @@ export default function BalanceCard({ card }: { card: GiftCard }) {
         </p>
         <p
           className={`text-5xl font-bold tracking-tight ${
-            isRedeemed || isDeactivated
+            isRedeemed || card.archived
               ? "text-neutral-400"
               : "text-emerald-600"
           }`}
         >
           ${card.balance.toFixed(2)}
         </p>
-        {isRedeemed && (
+        {card.archived ? (
+          <div className="mt-3">
+            <StatusBadge status="archived" />
+          </div>
+        ) : isRedeemed ? (
           <div className="mt-3">
             <StatusBadge status="redeemed" />
           </div>
-        )}
-        {isDeactivated && !isRedeemed && (
-          <div className="mt-3">
-            <StatusBadge status="deactivated" />
-          </div>
-        )}
-        {!isRedeemed && !isDeactivated && (
+        ) : isActive ? (
           <div className="mt-3">
             <StatusBadge status="active" />
           </div>
+        ) : (
+          <div className="mt-3">
+            <StatusBadge status="inactive" />
+          </div>
         )}
       </div>
-
-      {isDeactivated && (
-        <p className="mb-4 text-center text-sm text-red-600">
-          This card has been deactivated. Please contact the restaurant.
-        </p>
-      )}
-
       <div className="mb-4">
-        <Row label="Card Name" value={card.label || "—"} />
+        <Row label="Card Title" value={card.label || "—"} />
         <Row
           label="Original Value"
           value={`$${card.originalBalance.toFixed(2)}`}
         />
         <Row
-          label="Card ID"
-          value={`${card.id.slice(0, 8)}${card.id.length > 8 ? "…" : ""}`}
+          label="Last Redeemed"
+          value={card.updatedAt?.toDate().toLocaleDateString() || "—"}
         />
+        <Row label="Card ID" value={card.id} />
       </div>
 
       <p className="text-center text-xs text-neutral-400">
