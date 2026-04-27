@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
-import { getCard } from '@/lib/cards';
-import BalanceCard from '@/components/BalanceCard';
+import type { Metadata } from "next";
+import { getCard } from "@/lib/cards";
+import BalanceCard from "@/components/BalanceCard";
 
 export async function generateMetadata({
   params,
@@ -10,8 +10,10 @@ export async function generateMetadata({
   const { id } = await params;
   const card = await getCard(id);
   return {
-    title: card ? `Gift Card — ${card.label || 'Asian LE'}` : 'Gift Card',
-    description: card ? `Balance: $${card.balance.toFixed(2)}` : 'Gift card not found',
+    title: card ? `Gift Card — ${card.label || "Asian Le"}` : "Gift Card",
+    description: card
+      ? `Balance: $${card.balance.toFixed(2)}`
+      : "Gift card not found",
   };
 }
 
@@ -36,14 +38,19 @@ export default async function CardPage({
       <div className="w-full max-w-[400px]">
         {fetchError ? (
           <div className="text-center">
-            <p className="text-lg font-semibold text-neutral-800">Something went wrong</p>
+            <p className="text-lg font-semibold text-neutral-800">
+              Something went wrong
+            </p>
             <p className="mt-2 text-sm text-neutral-500">Please try again.</p>
           </div>
         ) : card === null ? (
           <div className="text-center">
-            <p className="text-lg font-semibold text-neutral-800">Card not found</p>
+            <p className="text-lg font-semibold text-neutral-800">
+              Card not found
+            </p>
             <p className="mt-2 text-sm text-neutral-500">
-              This QR code doesn&apos;t match any gift card. Please check with the restaurant.
+              This QR code doesn&apos;t match any gift card. Please check with
+              the restaurant.
             </p>
           </div>
         ) : (

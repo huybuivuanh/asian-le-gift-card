@@ -8,7 +8,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Asian LE Gift Card",
+  title: "Asian Le Gift Card",
   description: "Gift card experience",
 };
 
