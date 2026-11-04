@@ -1,62 +1,52 @@
 import type { Metadata } from "next";
-import { getCard } from "@/lib/cards";
+import { notFound } from "next/navigation";
+import { formatMoney, getCard, type GiftCard } from "@/lib/cards";
 import BalanceCard from "@/components/BalanceCard";
+import CardShell from "@/components/CardShell";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
+type Props = { params: Promise<{ id: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const card = await getCard(id);
+  let card: GiftCard | null = null;
+  try {
+    card = await getCard(id);
+  } catch {
+    // The page shows the error state; metadata just falls back to defaults.
+  }
   return {
     title: card ? `Gift Card — ${card.label || "Asian Le"}` : "Gift Card",
     description: card
-      ? `Balance: $${card.balance.toFixed(2)}`
+      ? `Balance: ${formatMoney(card.balance)}`
       : "Gift card not found",
   };
 }
 
-export default async function CardPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function CardPage({ params }: Props) {
   const { id } = await params;
 
-  let card = null;
-  let fetchError = false;
-
+  let card: GiftCard | null;
   try {
     card = await getCard(id);
-  } catch {
-    fetchError = true;
+  } catch (error) {
+    console.error(`Failed to load gift card ${id}`, error);
+    return (
+      <CardShell>
+        <div className="text-center">
+          <p className="text-lg font-semibold text-neutral-800">
+            Something went wrong
+          </p>
+          <p className="mt-2 text-sm text-neutral-500">Please try again.</p>
+        </div>
+      </CardShell>
+    );
   }
 
+  if (!card) notFound();
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-100 px-4 py-12">
-      <div className="w-full max-w-[400px]">
-        {fetchError ? (
-          <div className="text-center">
-            <p className="text-lg font-semibold text-neutral-800">
-              Something went wrong
-            </p>
-            <p className="mt-2 text-sm text-neutral-500">Please try again.</p>
-          </div>
-        ) : card === null ? (
-          <div className="text-center">
-            <p className="text-lg font-semibold text-neutral-800">
-              Card not found
-            </p>
-            <p className="mt-2 text-sm text-neutral-500">
-              This QR code doesn&apos;t match any gift card. Please check with
-              the restaurant.
-            </p>
-          </div>
-        ) : (
-          <BalanceCard card={card} />
-        )}
-      </div>
-    </main>
+    <CardShell>
+      <BalanceCard card={card} />
+    </CardShell>
   );
 }

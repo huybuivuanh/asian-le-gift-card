@@ -1,4 +1,4 @@
-import type { GiftCard } from "@/lib/cards";
+import { formatMoney, getCardStatus, type GiftCard } from "@/lib/cards";
 import StatusBadge from "./StatusBadge";
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -10,19 +10,16 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
-/** Remaining balance spent; original value was positive. */
-export function giftCardIsRedeemed(card: GiftCard): boolean {
-  return card.balance === 0 && card.originalBalance > 0;
-}
-
-/** Matches green "Active" badge: spendable balance, not archived. */
-export function giftCardIsActive(card: GiftCard): boolean {
-  return !card.archived && card.balance > 0;
-}
+// Rendered on the server (UTC), so pin the restaurant's time zone.
+const dateFormat = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Regina",
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
 
 export default function BalanceCard({ card }: { card: GiftCard }) {
-  const isRedeemed = giftCardIsRedeemed(card);
-  const isActive = giftCardIsActive(card);
+  const status = getCardStatus(card);
 
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
@@ -38,40 +35,23 @@ export default function BalanceCard({ card }: { card: GiftCard }) {
         </p>
         <p
           className={`text-5xl font-bold tracking-tight ${
-            isRedeemed || card.archived
+            status === "redeemed" || status === "archived"
               ? "text-neutral-400"
               : "text-emerald-600"
           }`}
         >
-          ${card.balance.toFixed(2)}
+          {formatMoney(card.balance)}
         </p>
-        {card.archived ? (
-          <div className="mt-3">
-            <StatusBadge status="archived" />
-          </div>
-        ) : isRedeemed ? (
-          <div className="mt-3">
-            <StatusBadge status="redeemed" />
-          </div>
-        ) : isActive ? (
-          <div className="mt-3">
-            <StatusBadge status="active" />
-          </div>
-        ) : (
-          <div className="mt-3">
-            <StatusBadge status="inactive" />
-          </div>
-        )}
+        <div className="mt-3">
+          <StatusBadge status={status} />
+        </div>
       </div>
       <div className="mb-4">
         <Row label="Card Title" value={card.label || "—"} />
-        <Row
-          label="Original Value"
-          value={`$${card.originalBalance.toFixed(2)}`}
-        />
+        <Row label="Original Value" value={formatMoney(card.originalBalance)} />
         <Row
           label="Last Redeemed"
-          value={card.updatedAt?.toDate().toLocaleDateString() || "—"}
+          value={card.updatedAt ? dateFormat.format(card.updatedAt) : "—"}
         />
         <Row label="Card ID" value={card.id} />
       </div>
