@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { formatMoney, getCard, type GiftCard } from "@/lib/cards";
+import { getCard, type GiftCard } from "@/lib/cards";
 import BalanceCard from "@/components/BalanceCard";
 import CardShell from "@/components/CardShell";
 
@@ -16,9 +16,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   return {
     title: card ? `Gift Card — ${card.label || "Asian Le"}` : "Gift Card",
-    description: card
-      ? `Balance: ${formatMoney(card.balance)}`
-      : "Gift card not found",
+    // Keep the balance out of link previews and search results.
+    description: "Check your Asian Le Restaurant gift card balance.",
+    robots: { index: false, follow: false },
   };
 }
 
