@@ -1,6 +1,5 @@
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "./firebase";
-import { Timestamp } from "firebase/firestore";
+import { adminDb } from "./firebase-admin";
+import type { Timestamp } from "firebase-admin/firestore";
 
 export type GiftCard = {
   id: string;
@@ -13,8 +12,7 @@ export type GiftCard = {
 };
 
 export async function getCard(id: string): Promise<GiftCard | null> {
-  const ref = doc(db, "giftCards", id);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) return null;
+  const snap = await adminDb.collection("giftCards").doc(id).get();
+  if (!snap.exists) return null;
   return { id: snap.id, ...snap.data() } as GiftCard;
 }
