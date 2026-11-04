@@ -17,7 +17,7 @@ Each gift card has a unique URL (`/card/[id]`) that customers access by scanning
 
 - Real-time balance lookup via Firestore on every scan
 - Card status: Active, Redeemed, Archived, or Inactive
-- Dynamic `<meta>` tags per card (balance in description for link previews)
+- Card pages are excluded from search engines, and the balance is kept out of link previews
 - QR-code friendly — mobile-optimized single-page layout
 
 ## Getting Started
@@ -34,13 +34,9 @@ Open [http://localhost:3000](http://localhost:3000).
 Create a `.env.local` file:
 
 ```
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_FIREBASE_APP_ID=
 FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...}
 ```
 
 `FIREBASE_SERVICE_ACCOUNT_JSON` is a Firebase service account key (JSON on one line). Generate one from Firebase Console → Project Settings → Service Accounts.
+
+It is only required locally. On Firebase App Hosting, the Admin SDK falls back to the backend's built-in credentials if the variable is not set.
