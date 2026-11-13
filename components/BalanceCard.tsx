@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { formatMoney, getCardStatus, type GiftCard } from "@/lib/cards";
 import StatusBadge from "./StatusBadge";
 
@@ -24,8 +25,14 @@ export default function BalanceCard({ card }: { card: GiftCard }) {
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-black">
-          Asian Le Restaurant Gift Card
+        {/* "Asian [logo] Le Gift Cards" wordmark, matching the rewards app. */}
+        <h1
+          className="flex items-center justify-center gap-1.5 text-2xl font-bold text-black"
+          aria-label="Asian Le Gift Cards"
+        >
+          <span aria-hidden="true">Asian</span>
+          <Image src="/logo.png" alt="" width={24} height={48} aria-hidden="true" />
+          <span aria-hidden="true">Le Gift Cards</span>
         </h1>
       </div>
 

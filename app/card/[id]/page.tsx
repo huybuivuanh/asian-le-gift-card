@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: card ? `Gift Card — ${card.label || "Asian Le"}` : "Gift Card",
     // Keep the balance out of link previews and search results.
-    description: "Check your Asian Le Restaurant gift card balance.",
+    description: "Check your Asian Le gift card balance.",
     robots: { index: false, follow: false },
   };
 }
