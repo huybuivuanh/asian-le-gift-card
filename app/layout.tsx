@@ -10,6 +10,8 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "Asian Le Gift Card",
   description: "Gift card experience",
+  // Only the restaurant website should show in search results.
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({
